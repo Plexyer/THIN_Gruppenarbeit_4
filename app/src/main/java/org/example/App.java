@@ -2,9 +2,9 @@ package org.example;
 
 public class App {
 
-    private final TuringMachine turingMachine = new TuringMachine();
+    private final Terminal terminal = new Terminal();
 
     public static void main(String[] args) {
-        new App().turingMachine.run();
+        new App().terminal.run();
     }
 }
