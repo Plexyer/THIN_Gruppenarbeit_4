@@ -145,8 +145,8 @@ public class TuringMachine {
 
     private void printBand() {
         StringBuilder bandString = new StringBuilder();
-        int start = Math.max(0, headPosition - 15);
-        int end = Math.min(band.size(), headPosition + 15 + inputCode.length());
+        int start = 0;
+        int end = band.size();
 
         for (int i = start; i < end; i++) {
             if (i == headPosition) {
@@ -211,26 +211,22 @@ public class TuringMachine {
             printConfiguration();
         }
 
-        if (headPosition >= band.size() - 5) {
-            extendBandRight();
-        } else if (headPosition < 5) {
+        if (headPosition < 15) {
             extendBandLeft();
+        } else if (headPosition >= band.size() - 15) {
+            extendBandRight();
         }
 
         return true;
     }
 
     private void extendBandLeft() {
-        for (int i = 0; i < 10; i++) {
-            band.add(0, '_');
-        }
-        headPosition += 10;
+        band.addFirst('_');
+        headPosition += 1;
     }
 
     private void extendBandRight() {
-        for (int i = 0; i < 10; i++) {
-            band.add('_');
-        }
+        band.addLast('_');
     }
 
     private void printConfiguration() {
