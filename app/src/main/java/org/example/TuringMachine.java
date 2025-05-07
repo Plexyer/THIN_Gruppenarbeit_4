@@ -19,6 +19,9 @@ public class TuringMachine {
     private List<Transition> transitions = new ArrayList<>();
     private final Debug debug = new Debug();
     private String inputCode = "";
+    private final char[] inputSymbols = {'0', '1', '_', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
+            'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I',
+            'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
 
     public TuringMachine(String groedelnumber, TextTerminal terminal, boolean stepMode) {
         this.groedelnumber = groedelnumber;
@@ -104,34 +107,11 @@ public class TuringMachine {
     private void parseTransitionBlock(String block) {
         String[] parts = block.split("1");
         if (parts.length != 5) return;
+
         int currentState = parts[0].length();
-
-        int zeroCount = parts[1].length();
-        char currentSymbol = switch (zeroCount) {
-            case 1 -> '0';
-            case 2 -> '1';
-            case 3 -> '_';
-            default -> {
-                debug.printlnDebug("Invalid read symbol encoding: " + parts[1]);
-                yield '\0'; // Yield a null character to indicate an error
-            }
-        };
-
-        if (currentSymbol == '\0') return;
+        char currentSymbol = inputSymbols[parts[1].length()-1];
         int newState = parts[2].length();
-
-        zeroCount = parts[3].length();
-        char newSymbol = switch (zeroCount) {
-            case 1 -> '0';
-            case 2 -> '1';
-            case 3 -> '_';
-            default -> {
-                debug.printlnDebug("Invalid write symbol encoding: " + parts[3]);
-                yield '\0'; // Yield a null character to indicate an error
-            }
-        };
-
-        if (newSymbol == '\0') return;
+        char newSymbol = inputSymbols[parts[3].length()-1];
         int direction = parts[4].equals("0") ? -1 : 1; // 0 for left, 1 for right
 
         transitions.add(new Transition(

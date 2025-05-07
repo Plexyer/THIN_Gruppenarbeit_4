@@ -17,14 +17,12 @@ public class Terminal {
     private final TextIO textIO = TextIoFactory.getTextIO();
     private final TextTerminal terminal = textIO.getTextTerminal();
     private boolean finished = false;
-    private final String regex = "1((0+1){4}0*11)*((0+1){4}0*)111[01]+";
+    private final String regex = "1?((0+1){4}0*11)*((0+1){4}0*)111[01]+";
     private static boolean stepMode = false;
     private String groedelnumber = "";
     private TuringMachine turingMachine;
 
     public void run() {
-
-
         do {
             String choice = textIO.newStringInputReader().read("""
                     1 - Read from file
@@ -45,7 +43,7 @@ public class Terminal {
 
     private void readInFile() {
         try (
-                FileReader fileReader = new FileReader(this.getClass().getResource("/input.txt").getFile());
+                FileReader fileReader = new FileReader(this.getClass().getResource("/quadrat.txt").getFile());
                 BufferedReader bufferedReader = new BufferedReader(fileReader))
         {
             debug.printlnDebug("File opened successfully.");
