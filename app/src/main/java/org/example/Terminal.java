@@ -18,11 +18,13 @@ public class Terminal {
     private final TextTerminal terminal = textIO.getTextTerminal();
     private boolean finished = false;
     private final String regex = "1((0+1){4}0*11)*((0+1){4}0*)111[01]+";
-    private final static boolean STEP_MODE = false;
+    private static boolean stepMode = false;
     private String groedelnumber = "";
     private TuringMachine turingMachine;
 
     public void run() {
+
+
         do {
             String choice = textIO.newStringInputReader().read("""
                     1 - Read from file
@@ -70,6 +72,19 @@ public class Terminal {
             if (inputEqualsExit(input) || finished) return;
             input = textIO.newStringInputReader().read("Invalid input. Please enter a valid Grödelnumber or Dezimal number:");
         }
+
+
+        String modeChoice = textIO.newStringInputReader().read("""
+            Choose execution mode:
+            1 - Step Mode (pause after each step)
+            2 - Run Mode (execute to completion)
+            
+            Enter your choice: """);
+        stepMode = "1".equals(modeChoice);
+        inputEqualsExit(modeChoice);
+        terminal.println();
+
+        turingMachine = new TuringMachine(groedelnumber, terminal, stepMode);
     }
 
     private boolean inputValid(String input) {
@@ -77,7 +92,6 @@ public class Terminal {
         assert input != null;
         if (input.matches(pattern.pattern())) {
             groedelnumber = input;
-            turingMachine = new TuringMachine(groedelnumber, terminal);
             return true;
         } else {
             if (validInputDecimal(input)) {
@@ -85,7 +99,6 @@ public class Terminal {
                 terminal.println("Valid input: " + input);
                 terminal.println();
                 convertDecimalToGroedelnumber(input);
-                turingMachine = new TuringMachine(groedelnumber, terminal);
                 return true;
             }
             return false;
@@ -94,12 +107,10 @@ public class Terminal {
 
     private void processFile() {
         readInFile();
-        terminal.println("File read successfully.");
-        terminal.println("File content: " + inputFile);
         terminal.println();
         for (String line : inputFile) {
             if (inputValid(line)) {
-                terminal.println("Valid input from file: " + line);
+                processGroedelnumber(groedelnumber);
             } else {
                 terminal.println("Invalid input from file: " + line);
             }
