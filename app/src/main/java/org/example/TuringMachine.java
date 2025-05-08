@@ -51,8 +51,13 @@ public class TuringMachine {
     }
 
     private void parseTransitions() {
-
-        String code = groedelnumber.substring(1);
+        String code;
+        if (groedelnumber.startsWith("1")) {
+            code = groedelnumber.substring(1);
+        }
+        else {
+            code = groedelnumber;
+        }
 
         int separatorIndex = code.indexOf("111");
         if (separatorIndex == -1) {

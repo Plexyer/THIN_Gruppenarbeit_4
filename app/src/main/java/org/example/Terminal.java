@@ -43,7 +43,7 @@ public class Terminal {
 
     private void readInFile() {
         try (
-                FileReader fileReader = new FileReader(this.getClass().getResource("/quadrat.txt").getFile());
+                FileReader fileReader = new FileReader(this.getClass().getResource("/aaron.txt").getFile());
                 BufferedReader bufferedReader = new BufferedReader(fileReader))
         {
             debug.printlnDebug("File opened successfully.");
