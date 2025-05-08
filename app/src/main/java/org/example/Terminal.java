@@ -1,7 +1,6 @@
 package org.example;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +20,7 @@ public class Terminal {
     private static boolean stepMode = false;
     private String groedelnumber = "";
     private TuringMachine turingMachine;
+    private String[] files = {"aaron.txt", "input.txt", "quadrat.txt"};
 
     public void run() {
         do {
@@ -32,7 +32,7 @@ public class Terminal {
                     Enter your choice: """);
 
             switch (choice) {
-                case "1" -> processFile();
+                case "1" -> chooseFile();
                 case "2" -> processGroedelnumber(textIO.newStringInputReader().read("Enter Grödelnumber or Dezimal number: "));
                 case "3", "exit" -> finished = true;
                 default -> terminal.println("Invalid choice. Please try again.");
@@ -41,12 +41,14 @@ public class Terminal {
         terminal.dispose();
     }
 
-    private void readInFile() {
+    private void readInFile(String filename) {
+        inputFile.clear();
         try (
-                FileReader fileReader = new FileReader(this.getClass().getResource("/aaron.txt").getFile());
-                BufferedReader bufferedReader = new BufferedReader(fileReader))
+                var inputStream = this.getClass().getResourceAsStream("/" + filename);
+                var reader = new java.io.InputStreamReader(inputStream);
+                var bufferedReader = new BufferedReader(reader))
         {
-            debug.printlnDebug("File opened successfully.");
+            debug.printlnDebug("File opened successfully: " + filename);
             String line = bufferedReader.readLine();
             if (line == null) {
                 terminal.println("File is empty.");
@@ -59,8 +61,8 @@ public class Terminal {
                 debug.printlnDebug("Line read from file: " + line);
             } while ((line = bufferedReader.readLine()) != null);
 
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException | NullPointerException e) {
+            terminal.println("Error reading file: " + e.getMessage());
         }
     }
 
@@ -103,9 +105,14 @@ public class Terminal {
         }
     }
 
-    private void processFile() {
-        readInFile();
+    private void processFile(String filename) {
+        readInFile(filename);
         terminal.println();
+        if (inputFile.isEmpty()) {
+            terminal.println("No data read from file.");
+            return;
+        }
+
         for (String line : inputFile) {
             if (inputValid(line)) {
                 processGroedelnumber(groedelnumber);
@@ -113,6 +120,28 @@ public class Terminal {
                 terminal.println("Invalid input from file: " + line);
             }
         }
+    }
+
+    private void chooseFile() {
+        terminal.println();
+        StringBuilder fileList = new StringBuilder("Available files:\n");
+        for (int i = 0; i < files.length; i++) {
+            fileList.append(i + 1).append(" - ").append(files[i]).append("\n");
+        }
+        terminal.println(fileList.toString().trim());
+
+        terminal.println();
+        String selection = textIO.newStringInputReader().read("Enter file number:");
+
+        if (inputEqualsExit(selection)) {
+            terminal.println();
+            return;
+        }
+
+        String selectedFile = files[Integer.parseInt(selection) - 1];
+        terminal.println();
+        terminal.println("Selected file: " + selectedFile);
+        processFile(selectedFile);
     }
 
     private boolean inputEqualsExit(String input) {
